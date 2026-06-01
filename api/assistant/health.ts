@@ -1,4 +1,4 @@
-import { getAssistantEnv } from '../_lib/assistant';
+import { getAssistantEnv } from '../_lib/assistant.js';
 
 export const config = {
   runtime: 'edge',

@@ -1,4 +1,4 @@
-import { runAssistantChat, resolveReferer, type ChatRequestBody } from '../_lib/assistant';
+import { runAssistantChat, resolveReferer, type ChatRequestBody } from '../_lib/assistant.js';
 
 export const config = {
   runtime: 'edge',
