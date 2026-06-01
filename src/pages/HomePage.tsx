@@ -47,11 +47,11 @@ export default function HomePage() {
           </div>
 
           <div className="home-hero-body">
-            <p className="home-eyebrow">Standalone demo · localStorage</p>
+            <p className="home-eyebrow">Enterprise helpdesk platform</p>
             <h1 className="home-title">Helpdesk Management System</h1>
             <p className="home-desc">
-              Explore a full ten-role IT helpdesk in your browser — tickets, SLA, escalations, knowledge base,
-              QA, audit logs, live charts, and <strong>Galaxy Guide</strong> AI. No server required.
+              Explore a full ten-role IT helpdesk — tickets, SLA, escalations, knowledge base, QA, audit logs,
+              live charts, and <strong>Galaxy Guide</strong> AI.
             </p>
 
             {!user && (

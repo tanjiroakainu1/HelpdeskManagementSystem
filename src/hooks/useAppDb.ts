@@ -4,7 +4,7 @@ import { api } from '@/lib/api';
 import type { AppDatabase } from '@/types';
 
 /**
- * Subscribe to localStorage-backed data. Re-renders when any api.mutate/save runs.
+ * Subscribe to system data. Re-renders when any api.mutate/save runs.
  */
 export function useAppDb(): AppDatabase {
   const { version } = useData();

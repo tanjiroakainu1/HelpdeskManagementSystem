@@ -29,7 +29,7 @@ function mutate(fn: (db: AppDatabase) => void): AppDatabase {
 export const api = {
   getDb: loadDb,
 
-  /** Reset localStorage to full demo seed (same as PHP reseed). */
+  /** Reset system data to full demo seed. */
   reseed(): AppDatabase {
     return reseedDb();
   },
@@ -174,7 +174,9 @@ export const api = {
 
   ticketStats() {
     const t = loadDb().tickets;
-    const open = t.filter((x) => !['closed', 'resolved'].includes(x.status)).length;
+    const open = t.filter(
+      (x) => !['closed', 'resolved', 'draft'].includes(x.status),
+    ).length;
     const now = Date.now();
     return {
       total: t.length,
@@ -195,12 +197,26 @@ export const api = {
     requesterId: number;
     departmentId: number | null;
   }): Ticket {
+    return this.createTicketDraft({ ...data, submit: true });
+  },
+
+  createTicketDraft(data: {
+    subject: string;
+    description: string;
+    category: string;
+    priority: TicketPriority;
+    requesterId: number;
+    departmentId: number | null;
+    submit?: boolean;
+  }): Ticket {
     let created!: Ticket;
     mutate((db) => {
+      if (!Array.isArray(db.tickets)) db.tickets = [];
       const id = nextId(db, 'tickets');
       const sla = db.slaPolicies.find((s) => s.priority === data.priority && s.isActive);
       const code = `HD-${String(id).padStart(4, '0')}`;
       const hours = sla?.resolveHours ?? 24;
+      const asDraft = !data.submit;
       created = {
         id,
         ticketCode: code,
@@ -208,12 +224,12 @@ export const api = {
         description: data.description,
         category: data.category,
         priority: data.priority,
-        status: 'open',
+        status: asDraft ? 'draft' : 'open',
         requesterId: data.requesterId,
         assignedTo: null,
         departmentId: data.departmentId,
-        slaPolicyId: sla?.id ?? null,
-        slaDueAt: new Date(Date.now() + hours * 3600000).toISOString(),
+        slaPolicyId: asDraft ? null : sla?.id ?? null,
+        slaDueAt: asDraft ? null : new Date(Date.now() + hours * 3600000).toISOString(),
         deptApproved: false,
         supervisorApproved: false,
         qaReviewed: false,
@@ -222,15 +238,61 @@ export const api = {
         closedAt: null,
       };
       db.tickets.push(created);
-      audit(db, data.requesterId, 'ticket_create', 'ticket', id, code);
-      notifyRole(db, 'help_desk_manager', 'New Ticket', code, `/help-desk-manager/assign-tickets`);
-      if (data.departmentId) {
-        db.users
-          .filter((u) => u.role === 'department_head' && u.departmentId === data.departmentId)
-          .forEach((h) => notify(db, h.id, 'Dept Approval Needed', code, `/department-head/approvals`));
+      audit(
+        db,
+        data.requesterId,
+        asDraft ? 'ticket_draft' : 'ticket_create',
+        'ticket',
+        id,
+        asDraft ? `${code} (draft)` : code,
+      );
+      if (!asDraft) {
+        notifyRole(db, 'help_desk_manager', 'New Ticket', code, `/help-desk-manager/assign-tickets`);
+        if (data.departmentId) {
+          db.users
+            .filter((u) => u.role === 'department_head' && u.departmentId === data.departmentId)
+            .forEach((h) => notify(db, h.id, 'Dept Approval Needed', code, `/department-head/approvals`));
+        }
       }
     });
     return created;
+  },
+
+  submitDraftTicket(ticketId: number, actorId: number): void {
+    mutate((db) => {
+      const t = db.tickets.find((x) => x.id === ticketId);
+      if (!t || t.status !== 'draft') return;
+      const sla = db.slaPolicies.find((s) => s.priority === t.priority && s.isActive);
+      const hours = sla?.resolveHours ?? 24;
+      t.status = 'open';
+      t.slaPolicyId = sla?.id ?? null;
+      t.slaDueAt = new Date(Date.now() + hours * 3600000).toISOString();
+      t.updatedAt = isoNow();
+      audit(db, actorId, 'ticket_create', 'ticket', ticketId, `${t.ticketCode} submitted`);
+      notifyRole(db, 'help_desk_manager', 'New Ticket', t.ticketCode, `/help-desk-manager/assign-tickets`);
+      if (t.departmentId) {
+        db.users
+          .filter((u) => u.role === 'department_head' && u.departmentId === t.departmentId)
+          .forEach((h) => notify(db, h.id, 'Dept Approval Needed', t.ticketCode, `/department-head/approvals`));
+      }
+    });
+  },
+
+  updateTicketDraft(
+    ticketId: number,
+    patch: Partial<Pick<Ticket, 'subject' | 'description' | 'category' | 'priority'>>,
+    actorId: number,
+  ): void {
+    mutate((db) => {
+      const t = db.tickets.find((x) => x.id === ticketId);
+      if (!t || t.status !== 'draft') return;
+      if (patch.subject != null) t.subject = patch.subject;
+      if (patch.description != null) t.description = patch.description;
+      if (patch.category != null) t.category = patch.category;
+      if (patch.priority != null) t.priority = patch.priority;
+      t.updatedAt = isoNow();
+      audit(db, actorId, 'ticket_draft', 'ticket', ticketId, `${t.ticketCode} updated`);
+    });
   },
 
   assignTicket(ticketId: number, assignTo: number, actorId: number): void {
@@ -481,19 +543,23 @@ export const api = {
     return loadDb().knowledgeArticles;
   },
 
-  addArticle(data: Omit<KnowledgeArticle, 'id' | 'createdAt' | 'updatedAt' | 'views'>): void {
+  addArticle(data: Omit<KnowledgeArticle, 'id' | 'createdAt' | 'updatedAt' | 'views'>): number {
+    let newId = 0;
     mutate((db) => {
+      if (!Array.isArray(db.knowledgeArticles)) db.knowledgeArticles = [];
+      if (!Array.isArray(db.kbCategories)) db.kbCategories = [];
       const now = isoNow();
-      const id = nextId(db, 'knowledgeArticles');
+      newId = nextId(db, 'knowledgeArticles');
       db.knowledgeArticles.push({
         ...data,
-        id,
+        id: newId,
         views: 0,
         createdAt: now,
         updatedAt: now,
       });
-      audit(db, data.authorId, 'article_create', 'article', id, data.title);
+      audit(db, data.authorId, 'article_create', 'article', newId, `${data.title} (${data.status})`);
     });
+    return newId;
   },
 
   updateArticle(id: number, patch: Partial<KnowledgeArticle>, actorId?: number): void {
@@ -615,6 +681,7 @@ function actionToOperation(action: string): import('@/types').CrudOperation {
   if (
     action.includes('create') ||
     action.includes('register') ||
+    action.includes('draft') ||
     action === 'login' ||
     action.includes('login')
   ) {

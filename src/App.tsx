@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { HashRouteSync } from '@/components/routing/HashRouteSync';
 import { FloatingChatbot } from '@/components/chat/FloatingChatbot';
 import { AuthProvider } from '@/context/AuthContext';
 import { DataProvider } from '@/context/DataContext';
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <DataProvider>
       <AuthProvider>
+        <HashRouteSync />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

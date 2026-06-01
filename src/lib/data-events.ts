@@ -1,4 +1,4 @@
-/** Fired after every localStorage write via api.mutate / saveDb / resetDb */
+/** Fired after every system data write via api.mutate / saveDb / resetDb */
 type Listener = () => void;
 
 const listeners = new Set<Listener>();

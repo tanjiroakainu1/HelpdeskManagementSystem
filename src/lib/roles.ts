@@ -28,7 +28,7 @@ export const DEMO_ACCOUNTS: Record<UserRole, string> = {
   system_auditor: 'auditor@helpdesk.local',
 };
 
-/** Shared menu item — all roles can view CRUD activity from localStorage */
+/** Shared menu item — all roles can view CRUD activity log */
 export const SHARED_SYSTEM_RECORDS_MENU = { label: 'System Records', slug: 'system-records' } as const;
 
 const PROFILE_MENU = { label: 'My Profile', slug: 'profile' } as const;

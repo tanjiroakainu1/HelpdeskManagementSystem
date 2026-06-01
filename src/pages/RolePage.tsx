@@ -1,4 +1,5 @@
 import { Navigate, useParams } from 'react-router-dom';
+import { RoleAccessGate } from '@/components/routing/RoleAccessGate';
 import { useAuth } from '@/context/AuthContext';
 import { AppShell } from '@/components/layout/AppShell';
 import { ROLE_CONFIGS } from '@/lib/roles';
@@ -18,9 +19,19 @@ export default function RolePage() {
   if (!user) return <Navigate to="/login" replace />;
 
   const config = ROLE_CONFIGS.find((c) => c.folder === roleFolder);
-  if (!config || config.key !== user.role) {
+  if (!config) {
     const own = ROLE_CONFIGS.find((c) => c.key === user.role);
     return <Navigate to={own ? `/${own.folder}/dashboard` : '/login'} replace />;
+  }
+
+  const pageSlug = slug ?? 'dashboard';
+
+  if (config.key !== user.role) {
+    return (
+      <AppShell roleKey={user.role} activeSlug="dashboard">
+        <RoleAccessGate requiredRole={config.key} roleFolder={roleFolder!} pageSlug={pageSlug} />
+      </AppShell>
+    );
   }
 
   const key = `${roleFolder}/${slug ?? 'dashboard'}`;
@@ -37,7 +48,6 @@ export default function RolePage() {
     );
   }
 
-  const pageSlug = slug ?? 'dashboard';
   const showActivity = !PAGES_WITHOUT_ACTIVITY_PANEL.has(pageSlug);
   const activityEntity = CRUD_ENTITY_BY_SLUG[pageSlug] ?? 'all';
   const chartLayout = getChartLayout(pageSlug);

@@ -54,9 +54,6 @@ export function AppShell({ children }: { children: ReactNode; roleKey?: string; 
 
           <div className="flex shrink-0 flex-wrap items-center justify-end gap-1.5 sm:gap-2">
             <HomeButton />
-            <span className="storage-pill hidden lg:inline" title="Data stored in browser localStorage">
-              Standalone · localStorage
-            </span>
             <span className="role-chip hidden max-w-[7rem] truncate sm:inline lg:max-w-none">{config.label}</span>
             <NotificationsPanel />
             <NavLink

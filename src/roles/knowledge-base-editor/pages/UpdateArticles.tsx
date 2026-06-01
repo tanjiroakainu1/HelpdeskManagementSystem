@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { useAppDb } from '@/hooks/useAppDb';
+import { rolePath } from '@/lib/routes';
 
 export default function UpdateArticles() {
   const articles = useAppDb().knowledgeArticles;
@@ -16,7 +17,7 @@ export default function UpdateArticles() {
           <ul className="space-y-2">
             {stale.map((a) => (
               <li key={a.id}>
-                <Link to={`/knowledge-base-editor/edit-articles`} className="link-accent">
+                <Link to={rolePath('knowledge-base-editor', 'edit-articles', { articleId: a.id })} className="link-accent">
                   {a.title}
                 </Link>
                 <span className="ml-2 text-xs text-muted">({a.status})</span>

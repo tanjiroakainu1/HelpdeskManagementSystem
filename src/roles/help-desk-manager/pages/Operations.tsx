@@ -1,9 +1,20 @@
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatGrid } from '@/components/ui/StatGrid';
-import { api } from '@/lib/api';
+import { useAppDb } from '@/hooks/useAppDb';
 
 export default function Operations() {
-  const s = api.ticketStats();
+  const db = useAppDb();
+  const t = db.tickets;
+  const s = {
+    open: t.filter((x) => !['closed', 'resolved', 'draft'].includes(x.status)).length,
+    escalated: t.filter((x) => x.status === 'escalated').length,
+    slaBreach: t.filter(
+      (x) =>
+        x.slaDueAt &&
+        new Date(x.slaDueAt).getTime() < Date.now() &&
+        !['resolved', 'closed', 'draft'].includes(x.status),
+    ).length,
+  };
   return (
     <>
       <PageHeader title="Operations Overview" />

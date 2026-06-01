@@ -1,6 +1,7 @@
 import type { TicketPriority, TicketStatus } from '@/types';
 
 const statusClass: Record<TicketStatus, string> = {
+  draft: 'bg-surface-3/90 text-slate-300 ring-border/60',
   open: 'bg-candy/15 text-candy-light ring-candy/35',
   assigned: 'bg-galaxy/20 text-galaxy-dust ring-galaxy/40',
   in_progress: 'bg-galaxy-soft/15 text-galaxy-dust ring-galaxy-soft/35',

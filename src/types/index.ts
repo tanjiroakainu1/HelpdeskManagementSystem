@@ -11,6 +11,7 @@ export type UserRole =
   | 'system_auditor';
 
 export type TicketStatus =
+  | 'draft'
   | 'open'
   | 'assigned'
   | 'in_progress'

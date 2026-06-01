@@ -18,7 +18,7 @@ export default function AssignTickets() {
       <div className="card">
         <div className="card-body card-body--flush-table">
           <TicketTable
-            tickets={db.tickets.filter((t) => !['closed', 'resolved'].includes(t.status))}
+            tickets={db.tickets.filter((t) => !['closed', 'resolved', 'draft'].includes(t.status))}
             extraColumns={(t) => (
               <form
                 onSubmit={(e: FormEvent<HTMLFormElement>) => {

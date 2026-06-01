@@ -2,7 +2,7 @@ import { PageHeader } from '@/components/ui/PageHeader';
 import { useAppDb } from '@/hooks/useAppDb';
 
 export default function Queues() {
-  const tickets = useAppDb().tickets.filter((t) => !['closed', 'resolved'].includes(t.status));
+  const tickets = useAppDb().tickets.filter((t) => !['closed', 'resolved', 'draft'].includes(t.status));
   const groups: Record<string, number> = {};
   tickets.forEach((t) => {
     const k = `${t.status}-${t.priority}`;

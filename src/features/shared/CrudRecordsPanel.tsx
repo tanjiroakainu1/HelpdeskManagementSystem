@@ -38,7 +38,7 @@ export function CrudRecordsPanel({
         <div className="min-w-0">
           <h2>{panelTitle}</h2>
           <p className="mt-1 text-xs text-muted">
-            Create / update / delete log — every role sees the same activity from localStorage.
+            Create / update / delete log — every role sees the same system activity.
           </p>
         </div>
         <Link to={systemRecordsPath(folder)} className="link-accent shrink-0 text-sm max-sm:w-full max-sm:text-center">

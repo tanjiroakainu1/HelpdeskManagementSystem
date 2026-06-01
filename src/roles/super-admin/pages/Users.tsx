@@ -27,7 +27,7 @@ export default function Users() {
 
   return (
     <>
-      <PageHeader title="Manage Users" description="User records in localStorage — changes apply for all roles." />
+      <PageHeader title="Manage Users" description="User records — changes apply for all roles." />
       <div className="card">
         <div className="card-body card-body--flush-table">
           <DataTableWrap>

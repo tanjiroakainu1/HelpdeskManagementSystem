@@ -2,12 +2,9 @@ import { useMemo } from 'react';
 import { DataTableWrap } from '@/components/ui/DataTableWrap';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useAppDb } from '@/hooks/useAppDb';
-import { STORAGE_KEY } from '@/lib/db';
 import { getSharedEntityRows } from '@/lib/entityTableData';
 
-/**
- * Live data from localStorage — identical for every role on this device.
- */
+/** Live shared entity rows — identical for every role. */
 export function SharedEntityDataPanel({
   entityType,
   limit = 20,
@@ -32,13 +29,9 @@ export function SharedEntityDataPanel({
         <div className="min-w-0">
           <h2>{title}</h2>
           <p className="mt-1 text-xs text-muted">
-            All roles read the same data from <code className="text-candy-light/90">{STORAGE_KEY}</code> in
-            localStorage (standalone mode).
+            All roles see the same live helpdesk records in the system.
           </p>
         </div>
-        <span className="storage-pill shrink-0" title="Browser localStorage">
-          localStorage
-        </span>
       </div>
       <div className="card-body card-body--flush-table">
         {!rows.length ? (

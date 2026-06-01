@@ -1,11 +1,12 @@
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatGrid } from '@/components/ui/StatGrid';
-import { api } from '@/lib/api';
 import { useAppDb } from '@/hooks/useAppDb';
 
 export default function SystemAccess() {
   const db = useAppDb();
-  const s = api.ticketStats();
+  const s = {
+    total: db.tickets.length,
+  };
   return (
     <>
       <PageHeader title="Full System Access" description="Central overview of all modules" />

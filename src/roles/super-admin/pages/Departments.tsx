@@ -48,7 +48,7 @@ export default function Departments() {
 
   return (
     <>
-      <PageHeader title="Departments" description="Manage departments — stored in localStorage for all roles." />
+      <PageHeader title="Departments" description="Manage departments — shared across all roles." />
       <form className="card mb-4" onSubmit={submit}>
         <div className="card-header">
           <h2>Add department</h2>

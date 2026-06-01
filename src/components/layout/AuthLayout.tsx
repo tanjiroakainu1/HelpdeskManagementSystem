@@ -30,11 +30,11 @@ export function AuthLayout({
               <div className="logo-mark mb-6 animate-float shadow-galaxy lg:mb-8">HD</div>
               <p className="auth-hero-eyebrow">IT service management</p>
               <h1 className="auth-hero-title mt-2 max-w-lg text-3xl font-display font-bold leading-[1.1] tracking-tight xl:text-5xl">
-                Your helpdesk, in the browser
+                Your enterprise helpdesk
               </h1>
               <p className="auth-hero-lead mt-4 max-w-md text-base leading-relaxed text-galaxy-dust/95 sm:text-lg">
                 Ten roles, one shared workflow — tickets, SLA, knowledge base, QA reviews, and audit trails
-                stored in localStorage for this standalone demo.
+                kept in sync across the system.
               </p>
             </div>
             <ul className="auth-hero-features">

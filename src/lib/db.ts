@@ -13,6 +13,8 @@ function isValidDb(data: unknown): data is AppDatabase {
 }
 
 function shouldPersistMigration(before: AppDatabase, after: AppDatabase): boolean {
+  if (!Array.isArray(before.knowledgeArticles) && Array.isArray(after.knowledgeArticles)) return true;
+  if (!Array.isArray(before.kbCategories) && Array.isArray(after.kbCategories)) return true;
   if (!Array.isArray(before.systemRecords) || before.systemRecords.length === 0) {
     if ((after.systemRecords?.length ?? 0) > 0) return true;
   }
@@ -61,7 +63,46 @@ export function importDb(db: AppDatabase): void {
   notifyDbChanged();
 }
 
+const NEXT_ID_COLLECTIONS: Partial<Record<keyof AppDatabase['nextIds'], keyof AppDatabase>> = {
+  users: 'users',
+  tickets: 'tickets',
+  ticketMessages: 'ticketMessages',
+  ticketAttachments: 'ticketAttachments',
+  escalations: 'escalations',
+  knowledgeArticles: 'knowledgeArticles',
+  assets: 'assets',
+  repairLogs: 'repairLogs',
+  qaReviews: 'qaReviews',
+  feedback: 'feedback',
+  notifications: 'notifications',
+  auditLogs: 'auditLogs',
+  systemRecords: 'systemRecords',
+  departments: 'departments',
+  kbCategories: 'kbCategories',
+};
+
+export function ensureNextIds(db: AppDatabase): void {
+  if (!db.nextIds || typeof db.nextIds !== 'object') {
+    db.nextIds = {};
+  }
+  for (const [key, collectionKey] of Object.entries(NEXT_ID_COLLECTIONS)) {
+    const k = key as keyof AppDatabase['nextIds'];
+    if (!collectionKey || (db.nextIds[k] != null && !Number.isNaN(db.nextIds[k]))) continue;
+    const coll = db[collectionKey];
+    const max = Array.isArray(coll) ? coll.reduce((m, row) => Math.max(m, (row as { id?: number }).id ?? 0), 0) : 0;
+    db.nextIds[k] = max + 1;
+  }
+}
+
 export function nextId(db: AppDatabase, key: keyof AppDatabase['nextIds']): number {
-  const id = db.nextIds[key]++;
+  ensureNextIds(db);
+  if (db.nextIds[key] == null || Number.isNaN(db.nextIds[key])) {
+    const collectionKey = NEXT_ID_COLLECTIONS[key];
+    const coll = collectionKey ? db[collectionKey] : [];
+    const max = Array.isArray(coll) ? coll.reduce((m, row) => Math.max(m, (row as { id?: number }).id ?? 0), 0) : 0;
+    db.nextIds[key] = max + 1;
+  }
+  const id = db.nextIds[key]!;
+  db.nextIds[key] = id + 1;
   return id;
 }

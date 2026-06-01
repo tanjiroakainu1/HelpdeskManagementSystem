@@ -13,7 +13,7 @@ export default function Sla() {
 
   return (
     <>
-      <PageHeader title="SLA Policies" description="Edit targets — saved to localStorage for the whole system." />
+      <PageHeader title="SLA Policies" description="Edit targets — changes apply across the whole system." />
       <div className="card">
         <div className="card-body card-body--flush-table">
           <DataTableWrap>

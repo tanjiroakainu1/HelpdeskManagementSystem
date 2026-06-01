@@ -36,8 +36,20 @@ export default function TicketView() {
   return (
     <>
       <PageHeader title={`${t.ticketCode} — ${t.subject}`} />
-      <p className="mb-4">
+      <p className="mb-4 flex flex-wrap items-center gap-2">
         <StatusBadge status={t.status} /> <PriorityBadge priority={t.priority} />
+        {t.status === 'draft' && (
+          <button
+            type="button"
+            className="btn-primary btn-sm"
+            onClick={() => {
+              api.submitDraftTicket(id, user!.id);
+              refresh();
+            }}
+          >
+            Submit draft to queue
+          </button>
+        )}
       </p>
       <div className="card mb-4">
         <div className="card-body">

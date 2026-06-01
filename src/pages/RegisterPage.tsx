@@ -52,7 +52,7 @@ export default function RegisterPage() {
           <span className="auth-section-step">2</span>
           <div>
             <h3 className="auth-section-title">Register as employee</h3>
-            <p className="auth-section-desc">Saved to localStorage — visible to all demo roles on this device.</p>
+            <p className="auth-section-desc">Your account is registered and available across all demo roles.</p>
           </div>
         </div>
 

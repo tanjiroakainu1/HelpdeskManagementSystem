@@ -4,13 +4,14 @@ import { HashRouter } from 'react-router-dom';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import App from './App';
 import { api } from '@/lib/api';
+import { STORAGE_KEY } from '@/lib/db';
 import './index.css';
 
 try {
   api.getDb();
 } catch (e) {
   console.warn('DB init failed, clearing storage:', e);
-  localStorage.removeItem('helpdesk_db_v2');
+  localStorage.removeItem(STORAGE_KEY);
   api.getDb();
 }
 

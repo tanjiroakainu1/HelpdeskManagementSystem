@@ -5,6 +5,8 @@ import { ticketsForRole } from '@/lib/ticketsForRole';
 import { useAuth } from '@/context/AuthContext';
 import { useAppDb } from '@/hooks/useAppDb';
 import { useRefresh } from '@/hooks/useRefresh';
+import { SaveNotice } from '@/components/ui/SaveNotice';
+import { MSG } from '@/lib/userMessages';
 
 export function AgentMessageForm({ internal }: { internal?: boolean }) {
   const { user } = useAuth();
@@ -62,7 +64,7 @@ export function AgentMessageForm({ internal }: { internal?: boolean }) {
           onChange={(e) => setMessage(e.target.value)}
           required
         />
-        {saved && <p className="alert-success">Saved to localStorage.</p>}
+        <SaveNotice show={saved}>{MSG.messageSaved}</SaveNotice>
         <button type="submit" className="btn-primary">
           Submit
         </button>

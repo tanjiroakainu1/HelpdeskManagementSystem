@@ -7,7 +7,7 @@ import { useRefresh } from '@/hooks/useRefresh';
 export default function PublishArticles() {
   const refresh = useRefresh();
   const { user } = useAuth();
-  const articles = useAppDb().knowledgeArticles;
+  const articles = useAppDb().knowledgeArticles.filter((a) => a.status !== 'archived');
 
   return (
     <>

@@ -71,7 +71,7 @@ Each role has its own folder with **one React file per function** under `pages/`
 
 ### Data layer
 
-- **`src/lib/api.ts`** → **`src/lib/db.ts`** (persistence key: `helpdesk_db_v2`)
+- **`src/lib/api.ts`** → **`src/lib/db.ts`** (client-side system database)
 - **`systemRecords`** — shared CRUD log visible to every role (**System Records** in the sidebar)
 
 ## Deploy on XAMPP (optional)
@@ -82,5 +82,5 @@ Copy the `dist/` folder contents into your htdocs path, or point the vhost docum
 
 1. Stop old dev servers (`Ctrl+C` in terminal), then run `npm run dev` again.
 2. Open the URL Vite prints (e.g. `http://localhost:5173/#/login`).
-3. If the page is still blank, open DevTools → Application → Local Storage → delete `helpdesk_db_v2`, then refresh.
+3. If the page is still blank, clear this site’s application data in your browser (or use Super Admin → Settings → Reset demo data), then refresh.
 4. Or run `npm run build` and open `dist/index.html` in the browser.

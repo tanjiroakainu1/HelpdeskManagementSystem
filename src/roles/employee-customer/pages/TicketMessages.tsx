@@ -6,6 +6,8 @@ import { api } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 import { useAppDb } from '@/hooks/useAppDb';
 import { useRefresh } from '@/hooks/useRefresh';
+import { SaveNotice } from '@/components/ui/SaveNotice';
+import { MSG } from '@/lib/userMessages';
 
 export default function TicketMessages() {
   const [params] = useSearchParams();
@@ -37,7 +39,7 @@ export default function TicketMessages() {
 
   return (
     <>
-      <PageHeader title="Ticket Messages" description="View and send replies — saved in localStorage for all roles." />
+      <PageHeader title="Ticket Messages" description="View and send replies — visible to everyone on this ticket." />
       {!mine.length ? (
         <div className="card">
           <div className="card-body">
@@ -97,7 +99,9 @@ export default function TicketMessages() {
                 onChange={(e) => setMsg(e.target.value)}
                 required
               />
-              {saved && <p className="alert-success mt-2">Message saved.</p>}
+              <SaveNotice show={saved} className="mt-2">
+                {MSG.messageSaved}
+              </SaveNotice>
               <button type="submit" className="btn-primary mt-3">
                 Send reply
               </button>

@@ -41,7 +41,7 @@ export function useData() {
   return ctx;
 }
 
-/** Subscribe to DB; returns fresh snapshot from localStorage. */
+/** Subscribe to DB; returns fresh snapshot from the system store. */
 export function useDb(): { db: AppDatabase; version: number } {
   const { version } = useData();
   return { db: api.getDb(), version };

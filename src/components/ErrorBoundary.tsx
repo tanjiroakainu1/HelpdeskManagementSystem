@@ -1,5 +1,6 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { HomeButton } from '@/components/ui/HomeButton';
+import { STORAGE_KEY } from '@/lib/db';
 
 interface Props {
   children: ReactNode;
@@ -39,7 +40,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     type="button"
                     className="btn-ghost min-h-[3.25rem] w-full px-8 sm:w-auto"
                     onClick={() => {
-                      localStorage.removeItem('helpdesk_db_v2');
+                      localStorage.removeItem(STORAGE_KEY);
                       window.location.href = '/#/login';
                       window.location.reload();
                     }}

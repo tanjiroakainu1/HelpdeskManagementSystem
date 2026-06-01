@@ -36,7 +36,7 @@ export default function Categories() {
 
   return (
     <>
-      <PageHeader title="Categories" description="KB categories stored in localStorage — visible to all roles." />
+      <PageHeader title="Categories" description="Knowledge base categories — visible to all roles." />
       <form className="card mb-4" onSubmit={submit}>
         <div className="card-body flex flex-col gap-3 sm:flex-row sm:items-end">
           <input
