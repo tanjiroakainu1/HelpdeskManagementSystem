@@ -3,9 +3,13 @@ export interface ChatRequestBody {
   systemContext?: string;
 }
 
-export type AssistantResult =
-  | { ok: true; reply: string }
-  | { ok: false; error: string; status: number };
+export type AssistantSuccess = { ok: true; reply: string };
+export type AssistantFailure = { ok: false; error: string; status: number };
+export type AssistantResult = AssistantSuccess | AssistantFailure;
+
+export function isAssistantFailure(result: AssistantResult): result is AssistantFailure {
+  return result.ok === false;
+}
 
 function sanitizeProviderError(raw?: string): string {
   if (!raw) return 'Galaxy Guide could not complete that request. Try again.';

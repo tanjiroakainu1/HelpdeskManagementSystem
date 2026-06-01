@@ -1,4 +1,9 @@
-import { runAssistantChat, resolveReferer, type ChatRequestBody } from '../_lib/assistant.js';
+import {
+  isAssistantFailure,
+  runAssistantChat,
+  resolveReferer,
+  type ChatRequestBody,
+} from '../_lib/assistant.js';
 
 export const config = {
   runtime: 'edge',
@@ -29,7 +34,7 @@ export default async function handler(request: Request): Promise<Response> {
 
   const result = await runAssistantChat(body, resolveReferer(request));
 
-  if (!result.ok) {
+  if (isAssistantFailure(result)) {
     return Response.json({ error: result.error }, { status: result.status, headers: corsHeaders });
   }
 
